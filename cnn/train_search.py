@@ -144,14 +144,19 @@ def train(train_queue, valid_queue, model, architect, criterion, optimizer, lr):
     input_search = Variable(input_search, requires_grad=False).cuda()
     target_search = Variable(target_search, requires_grad=False).cuda(async=True)
 
+    # 对alpha进行更新
     architect.step(input, target, input_search, target_search, lr, optimizer, unrolled=args.unrolled)
 
+    # 清除之前的梯度
     optimizer.zero_grad()
     logits = model(input)
     loss = criterion(logits, target)
 
+    # 反向传播,计算梯度
     loss.backward()
+    # 梯度截取
     nn.utils.clip_grad_norm(model.parameters(), args.grad_clip)
+    # 应用梯度
     optimizer.step()
 
     prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))

@@ -15,6 +15,7 @@ PRIMITIVES = [
 
 NASNet = Genotype(
   normal = [
+    # 操作       前驱节点序号
     ('sep_conv_5x5', 1),
     ('sep_conv_3x3', 0),
     ('sep_conv_5x5', 0),
